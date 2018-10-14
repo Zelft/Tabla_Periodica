@@ -17,12 +17,12 @@ import org.json.simple.parser.JSONParser;
  *
  * @author XPC
  */
-public class Elemento {
+public class Elemento{
 
     private String clasificacion; 
     private String simbolo;
     private String nombre;
-    private String masaAtomica;
+    private float masaAtomica;
     private String densidad;
     private String puntoFusion;
     private String puntoEbulicion;
@@ -31,6 +31,7 @@ public class Elemento {
     private String URL_visualizacion;
     private String aspectoMolecular;
     private String espectro;
+    private int numeroAtomico;
        
     /**
      *
@@ -38,16 +39,45 @@ public class Elemento {
      * @throws IOException
      * @throws org.json.simple.parser.ParseException
      */
-    Elemento(String pNombre, String pClasificacion, String pSimbolo, String pMasaAtomica, String pDensidad, String pPuntoFusion, String pPuntoEbullicion, String pElectronegatividad){
+    Elemento(String pNombre, String numeroAtomico, String pClasificacion, String pSimbolo, String pMasaAtomica, String pDensidad, String pPuntoFusion, String pPuntoEbullicion, String pElectronegatividad){
         this.nombre = pNombre;
         this.simbolo = pSimbolo;
         this.clasificacion = pClasificacion;
-        this.masaAtomica = pMasaAtomica;
+        this.masaAtomica = calcularMasaAtomica(pMasaAtomica);
         this.densidad = pDensidad;
         this.puntoFusion = pPuntoFusion;
         this.puntoEbulicion = pPuntoEbullicion;
         this.electronegatividad = pElectronegatividad;
+        this.numeroAtomico = Integer.parseInt(numeroAtomico);
         
+    }
+    
+    /**
+     * Obtiene la masa atómica desde un String
+     * @param masaAtomica
+     * @return Flotante
+     */
+    static float calcularMasaAtomica(String masaAtomica) {
+      float masa = 0;
+      boolean afterComma = false;
+      int contComma = 0;
+      for (char c : masaAtomica.toCharArray()) {
+        if (c >= '0' && c <= '9') {
+          if (afterComma) {
+            String number = "0.";
+            for (int i = 0; i < contComma; i++) {
+              number += "0";
+            }
+            contComma++;
+            masa += Float.parseFloat(number + c);
+          } else {
+            masa *= 10;
+            masa += c - '0';
+          }
+        } else if (c == ',' || c == '.') afterComma = true;
+        else if (c != ' ' && afterComma) break;
+      }
+      return masa;
     }
     
     
@@ -96,14 +126,14 @@ public class Elemento {
     /**
      * @return the masaAtomica
      */
-    public String getMasaAtomica() {
+    public float getMasaAtomica() {
         return masaAtomica;
     }
 
     /**
      * @param masaAtomica the masaAtomica to set
      */
-    public void setMasaAtomica(String masaAtomica) {
+    public void setMasaAtomica(float masaAtomica) {
         this.masaAtomica = masaAtomica;
     }
 
@@ -218,5 +248,12 @@ public class Elemento {
     public void setEspectro(String espectro) {
         this.espectro = espectro;
     }
-    
+
+  public int getNumeroAtomico() {
+    return numeroAtomico;
+  }
+
+  public void setNumeroAtomico(int numeroAtomico) {
+    this.numeroAtomico = numeroAtomico;
+  }
 }
